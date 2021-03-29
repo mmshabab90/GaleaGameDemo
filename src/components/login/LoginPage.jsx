@@ -21,6 +21,7 @@ import {
   socialLogin,
 } from "../../App/firestore/firebaseService";
 import Alert from "@material-ui/lab/Alert";
+import ResetPassword from "./ResetPassword";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -53,6 +54,7 @@ export default function LoginPage() {
   const classes = useStyles();
   const history = useHistory();
   const [btnBack, setBtnBack] = React.useState(false);
+  const [resetPassword, setResetPassword] = React.useState(false);
 
   function handleSocialLogin(provider) {
     socialLogin(provider);
@@ -69,6 +71,7 @@ export default function LoginPage() {
       try {
         await signInWithEmail(values);
         resetForm({ values: "" });
+        setSubmitting(false);
         history.push("/");
       } catch (error) {
         setErrors({ auth: "Problem, with email or password" });
@@ -105,48 +108,59 @@ export default function LoginPage() {
             justify="center"
             alignItems="center"
           >
-            <form onSubmit={formik.handleSubmit}>
-              <TextField
-                fullWidth
-                id="email"
-                name="email"
-                label="Email"
-                className={classes.textField}
-                value={formik.values.email}
-                onChange={formik.handleChange}
-                error={formik.touched.email && Boolean(formik.errors.email)}
-                helperText={formik.touched.email && formik.errors.email}
-              />
+            {!resetPassword ? (
+              <form onSubmit={formik.handleSubmit}>
+                <TextField
+                  fullWidth
+                  id="email"
+                  name="email"
+                  label="Email"
+                  className={classes.textField}
+                  value={formik.values.email}
+                  onChange={formik.handleChange}
+                  error={formik.touched.email && Boolean(formik.errors.email)}
+                  helperText={formik.touched.email && formik.errors.email}
+                />
 
-              <TextField
-                fullWidth
-                id="password"
-                name="password"
-                label="Password"
-                type="password"
-                className={classes.textField}
-                value={formik.values.password}
-                onChange={formik.handleChange}
-                error={
-                  formik.touched.password && Boolean(formik.errors.password)
-                }
-                helperText={formik.touched.password && formik.errors.password}
-              />
+                <TextField
+                  fullWidth
+                  id="password"
+                  name="password"
+                  label="Password"
+                  type="password"
+                  className={classes.textField}
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
+                  error={
+                    formik.touched.password && Boolean(formik.errors.password)
+                  }
+                  helperText={formik.touched.password && formik.errors.password}
+                />
 
-              {formik.errors.auth && (
-                <Alert severity="error">{formik.errors.auth}</Alert>
-              )}
+                {formik.errors.auth && (
+                  <Alert severity="error">{formik.errors.auth}</Alert>
+                )}
 
-              <Button
-                color="inherit"
-                variant="contained"
-                fullWidth
-                type="submit"
-                className={classes.button}
-              >
-                Submit
-              </Button>
-            </form>
+                <Button
+                  color="inherit"
+                  variant="contained"
+                  fullWidth
+                  type="submit"
+                  className={classes.button}
+                >
+                  Submit
+                </Button>
+
+                <Button
+                  color="secondary"
+                  onClick={() => setResetPassword(true)}
+                >
+                  Forgot password? Click Here
+                </Button>
+              </form>
+            ) : (
+              <ResetPassword setResetPassword={setResetPassword} />
+            )}
           </Grid>
 
           <Grid

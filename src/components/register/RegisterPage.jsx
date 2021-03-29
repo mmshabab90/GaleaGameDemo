@@ -65,6 +65,7 @@ export default function RegisterPage() {
           setError(null);
           await registerInFirebase(values);
           resetForm({ values: "" });
+          setSubmitting(false);
           history.push("/");
         }
       } catch (error) {

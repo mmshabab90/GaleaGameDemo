@@ -1,31 +1,21 @@
 import { Grid, Typography } from "@material-ui/core";
-import React, { useEffect } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  dataFromSnapshot,
-  getStocksFromFirestore,
-} from "../../App/firestore/firestoreService";
+import { listenToStocksFromFirestore } from "../../App/firestore/firestoreService";
 import { listenToStocks } from "../../redux/actions/stocksActions";
 import AppLoader from "../common/uiElements/AppLoader";
 import GlobalLineChart from "../common/charts/GlobalLineChart";
+import useFirestoreCollection from "../common/hooks/useFirestoreCollection";
 
 export default function HomePage() {
   const dispatch = useDispatch();
   const { stocks } = useSelector((state) => state.stocks);
 
-  useEffect(() => {
-    const unsubscribe = getStocksFromFirestore({
-      next: (snapshot) =>
-        dispatch(
-          listenToStocks(
-            snapshot.docs.map((docSnapshot) => dataFromSnapshot(docSnapshot))
-          )
-        ),
-      error: (error) => console.log(error),
-    });
-
-    return unsubscribe;
-  }, [dispatch]);
+  useFirestoreCollection({
+    query: () => listenToStocksFromFirestore(),
+    data: (stocks) => dispatch(listenToStocks(stocks)),
+    deps: [dispatch],
+  });
 
   function getMinData() {
     return Math.min.apply(

@@ -21,10 +21,6 @@ export function dataFromSnapshot(snapshot) {
   };
 }
 
-export function getStocksFromFirestore(observer) {
-  return db.collection("stock").onSnapshot(observer);
-}
-
 export function setUserProfileData(user) {
   return db
     .collection("users")
@@ -35,4 +31,14 @@ export function setUserProfileData(user) {
       photoURL: user.photoURL || null,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     });
+}
+
+// Get stocks collection from firestore
+export function listenToStocksFromFirestore() {
+  return db.collection("stock");
+}
+
+// Get single stock document from firestore
+export function listenToStockFromFirestore(stockId) {
+  return db.collection("stock").doc(stockId);
 }
